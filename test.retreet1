@@ -1,0 +1,8 @@
+Main(n){
+o=odd(n)
+e=even(n)
+}
+odd(n){
+if(true)return 0 else ls=even(n,l)
+return ls+1
+}
