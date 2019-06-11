@@ -1,0 +1,61 @@
+grammar retreet1;                         
+
+prog : func+ ;                                  
+
+func : main
+        |  FuncID '(' LocVars ',' IntVars ')'  '{' stmt '}'  
+        |  FuncID '(' LocVars ')' '{' stmt'}'  
+        ;
+
+main : 'Main' '(' LocVars ')''{' stmt '}';
+
+stmt : block
+        | 'if' '(' bexpr ')' stmt 'else' stmt 
+        | stmt  NEWLINE
+        | '{' stmt ':' stmt '}'                                     // : means parellel
+        ;
+
+block :IntVars'=' calledfunc
+         | assgn+
+         ;
+
+calledfunc : FuncID '(' lexpr',' aexpr ')' ;
+
+assgn : LocVars'.'IntVars'='aexpr
+          | IntVars'='aexpr
+          | 'return' IntVars
+
+lexpr : LocVars
+        | lexpr '.' LocVars
+        ;
+
+bexpr : 'true'
+          | aexpr'>''0'
+          | lexpr '=='nil
+          | '!'bexpr
+          | bexpr'&&'bexpr
+          ;
+
+aexpr : '0' 
+      | '1'
+      | aexpr ('+'|'-') aexpr
+      | IntVars
+      | LocVars '.' IntVars
+      ;
+
+LocVars : ID;
+
+IntVars : IntVars'+'IntVars
+            | ID
+            | IntVars'+'INT 
+            ;
+
+FuncID : ID;
+
+
+dir （ Loc Fields v （ Int Vars n （ Loc Vars f （ Int Fields g : Function IDs
+
+ID : [a-zA-Z]+;                       
+INT : [0-9]+;
+NEWLINE : '\r'? '\n';
+WS : [ \t]+ ->skip;
