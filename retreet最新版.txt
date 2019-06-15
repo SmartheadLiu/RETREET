@@ -1,61 +1,75 @@
-grammar retreet1;                         
+grammar retreet;                         
 
 prog : func+ ;                                  
 
-func : main
-        |  FuncID '(' LocVars ',' IntVars ')'  '{' stmt '}'  
-        |  FuncID '(' LocVars ')' '{' stmt'}'  
-        ;
+func : main NEWLINE*
+     | (calledfunc NEWLINE*)+
+     ;
 
-main : 'Main' '(' LocVars ')''{' stmt '}';
+main : 'Main' '(' locvars ')'NEWLINE*'{' NEWLINE*stmt '}';
 
-stmt : block
-        | 'if' '(' bexpr ')' stmt 'else' stmt 
-        | stmt  NEWLINE
-        | '{' stmt ':' stmt '}'                                     // : means parellel
-        ;
+calledfunc : funcid '(' lexpr',' aexpr ')'NEWLINE* '{' NEWLINE*stmt '}'
+           | funcid '(' lexpr ')'NEWLINE* '{'NEWLINE* stmt '}'
+           ;
+           
+stmt : ( block SEMICOLON NEWLINE?)+ 
+     | (ifstmt NEWLINE*)+
+     | ('{' stmt ':' stmt '}'NEWLINE*)+
+     | '{' NEWLINE* stmt NEWLINE*'}'NEWLINE*
+     ;
 
-block :IntVars'=' calledfunc
-         | assgn+
+block : funccall+
+      | assgn+ 
+      ;
+
+ifstmt : 'if' '(' bexpr ')' NEWLINE*stmt 'else' NEWLINE*stmt ;
+
+funccall : intvars'='funcid'('lexpr','aexpr')'
+         | intvars'='funcid'('lexpr')' 
          ;
 
-calledfunc : FuncID '(' lexpr',' aexpr ')' ;
-
-assgn : LocVars'.'IntVars'='aexpr
-          | IntVars'='aexpr
-          | 'return' IntVars
-
-lexpr : LocVars
-        | lexpr '.' LocVars
-        ;
+assgn : locvars'.'intvars'='aexpr
+      | intvars'='aexpr
+      | 'return' returnexpr
+      ;
+      
+lexpr : locvars
+      | lexpr '.' locvars
+      ;
 
 bexpr : 'true'
-          | aexpr'>''0'
-          | lexpr '=='nil
-          | '!'bexpr
-          | bexpr'&&'bexpr
-          ;
+      | aexpr'>''0'
+      | lexpr '==''nil'
+      | '!'bexpr
+      | bexpr'&&'bexpr
+      ;
 
 aexpr : '0' 
       | '1'
       | aexpr ('+'|'-') aexpr
-      | IntVars
-      | LocVars '.' IntVars
+      | intvars
+      | locvars '.' intvars
       ;
 
-LocVars : ID;
+locvars : ID;
 
-IntVars : IntVars'+'IntVars
-            | ID
-            | IntVars'+'INT 
-            ;
+returnexpr : intvars
+           | '('intvars')'
+           | '('intvars','intvars')'
+           | '0'
+           ;
 
-FuncID : ID;
+intvars : intvars'+'intvars
+        | intvars'+'INT
+        | ID
+        | INT
+        ;
+        
+funcid : ID ;
 
-
-dir （ Loc Fields v （ Int Vars n （ Loc Vars f （ Int Fields g : Function IDs
-
-ID : [a-zA-Z]+;                       
 INT : [0-9]+;
+ID : [a-zA-Z]+;                       
 NEWLINE : '\r'? '\n';
 WS : [ \t]+ ->skip;
+SEMICOLON : ';';
+
